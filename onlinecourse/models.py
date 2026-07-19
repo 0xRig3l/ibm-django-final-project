@@ -1,5 +1,6 @@
 import sys
 from django.utils.timezone import now
+
 try:
     from django.db import models
 except Exception:
@@ -49,11 +50,12 @@ class Learner(models.Model):
 
     def __str__(self):
         return self.user.username + "," + \
-               self.occupation
+            self.occupation
 
 
 # Course model
 class Course(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.TextField(null=False, max_length=30, default='online course')
     image = models.ImageField(upload_to='course_images/')
     description = models.TextField(max_length=1000)
@@ -65,11 +67,12 @@ class Course(models.Model):
 
     def __str__(self):
         return "Name: " + self.name + "," + \
-               "Description: " + self.description
+            "Description: " + self.description
 
 
 # Lesson model
 class Lesson(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.TextField(max_length=200, default="title")
     order = models.IntegerField(default=0)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -88,11 +91,14 @@ class Enrollment(models.Model):
         (HONOR, 'Honor'),
         (BETA, 'BETA')
     ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     date_enrolled = models.DateField(default=now)
     mode = models.TextField(max_length=5, choices=COURSE_MODES, default=AUDIT)
     rating = models.FloatField(default=5.0)
+
 
 class Question(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -102,7 +108,7 @@ class Question(models.Model):
 
     def has_scored(self, selected_ids):
         all_answers = self.choice_set.filter(is_correct=True).count()
-        selected_correct = self.choice_set.filter(is_correct=True,  id__in=selected_ids).count()
+        selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
 
         if all_answers == selected_correct:
             return 1
@@ -112,11 +118,13 @@ class Question(models.Model):
     def __str__(self):
         return f"Question: {self.content}"
 
+
 class Choice(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     content = models.TextField(null=False, max_length=200)
     is_correct = models.BooleanField(default=False)
+
 
 # One enrollment could have multiple submission
 # One submission could have multiple choices

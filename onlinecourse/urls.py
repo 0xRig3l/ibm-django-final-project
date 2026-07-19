@@ -5,20 +5,19 @@ from . import views
 
 app_name = 'onlinecourse'
 urlpatterns = [
-    # route is a string contains a URL pattern
-    # view refers to the view function
-    # name the URL
-    path(route='', view=views.CourseListView.as_view(), name='index'),
-    path('registration/', views.registration_request, name='registration'),
-    path('login/', views.login_request, name='login'),
-    path('logout/', views.logout_request, name='logout'),
-    # ex: /onlinecourse/5/
-    path('<int:pk>/', views.CourseDetailView.as_view(), name='course_details'),
-    # ex: /onlinecourse/5/enroll/
-    path('<int:course_id>/enroll/', views.enroll, name='enroll'),
+                  # route is a string contains a URL pattern
+                  # view refers to the view function
+                  # name the URL
+                  path(route='', view=views.CourseListView.as_view(), name='index'),
+                  path('signup/', views.signup_request, name='signup'),
+                  path('login/', views.login_request, name='login'),
+                  path('logout/', views.logout_request, name='logout'),
+                  # ex: /course/5/
+                  path('course/<uuid:pk>/', views.CourseDetailsView.as_view(), name='course_details'),
+                  # ex: /course/5/enroll/
+                  path('course/<uuid:course_id>/enroll/', views.enroll, name='enroll'),
+                  path('course/<uuid:course_id>/submit/', views.submit, name='submit'),
+                  path('course/<uuid:course_id>/submission/<uuid:submission_id>/result/', views.show_exam_result,
+                       name='exam_result'),
 
-    # <HINT> Create a route for submit view
-
-    # <HINT> Create a route for show_exam_result view
-
- ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
